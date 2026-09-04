@@ -1,0 +1,20 @@
+name: tiny
+clock_ghz: 1.0
+grid: {rows: 2, cols: 2}
+core:
+  sram_bytes: 65536
+  matrix_unit: {macs_per_cycle: 1024, tile_shape: [32, 32, 32], count: 1}
+  vector_unit: {lanes: 32, elem_bytes: 4, ops_per_cycle: 1, count: 1}
+  dm_engines: 2
+  noc_read_bytes_per_cycle: 32
+noc:
+  count: 2
+  link_bytes_per_cycle: 32
+  hop_latency_cycles: 2
+  multicast: true
+dram:
+  channels: 1
+  bytes_per_cycle_per_channel: 12
+  latency_cycles: 300
+  positions: edge_left_right
+sync: {semaphore_latency_cycles: 8}

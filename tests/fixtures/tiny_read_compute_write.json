@@ -1,0 +1,54 @@
+{
+  "schedule_version": "0.1",
+  "cores": {
+    "0,0": {
+      "reader": [
+        { "id": 0, "op": "CB_RESERVE", "cb": "in0", "count": 1 },
+        {
+          "id": 1,
+          "op": "NOC_READ",
+          "src": "dram.ch0",
+          "offset": 0,
+          "bytes": 4096,
+          "dst_cb": "in0",
+          "noc": 0
+        },
+        { "id": 2, "op": "CB_PUSH", "cb": "in0", "count": 1 }
+      ],
+      "compute": [
+        { "id": 3, "op": "CB_WAIT", "cb": "in0", "count": 1 },
+        { "id": 4, "op": "CB_RESERVE", "cb": "out0", "count": 1 },
+        {
+          "id": 5,
+          "op": "COMPUTE",
+          "kernel": "matmul",
+          "in_cbs": ["in0"],
+          "out_cbs": ["out0"],
+          "cost": { "macs": 32768, "vector_ops": 0 }
+        },
+        { "id": 6, "op": "CB_POP", "cb": "in0", "count": 1 },
+        { "id": 7, "op": "CB_PUSH", "cb": "out0", "count": 1 }
+      ],
+      "writer": [
+        { "id": 8, "op": "CB_WAIT", "cb": "out0", "count": 1 },
+        {
+          "id": 9,
+          "op": "NOC_WRITE",
+          "src_cb": "out0",
+          "dst": "dram.ch0",
+          "offset": 4096,
+          "bytes": 4096,
+          "noc": 1
+        },
+        { "id": 10, "op": "CB_POP", "cb": "out0", "count": 1 }
+      ]
+    }
+  },
+  "cbs": {
+    "core(0,0).in0": { "slots": 2, "slot_bytes": 4096 },
+    "core(0,0).out0": { "slots": 2, "slot_bytes": 4096 }
+  },
+  "sram_plan": {
+    "core(0,0)": { "in0": 0, "out0": 8192 }
+  }
+}

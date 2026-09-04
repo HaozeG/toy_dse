@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accel-dse.local/schedule.schema.json",
+  "title": "schedule.json",
+  "description": "Command-stream IR executed by the simulator. schedule_version 0.1 (Phase 1).",
+  "type": "object",
+  "required": ["schedule_version", "cores", "cbs", "sram_plan"],
+  "properties": {
+    "schedule_version": { "type": "string", "const": "0.1" },
+    "cores": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["reader", "compute", "writer"],
+        "properties": {
+          "reader": { "type": "array", "items": { "$ref": "#/$defs/command" } },
+          "compute": { "type": "array", "items": { "$ref": "#/$defs/command" } },
+          "writer": { "type": "array", "items": { "$ref": "#/$defs/command" } }
+        }
+      }
+    },
+    "cbs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["slots", "slot_bytes"],
+        "properties": {
+          "slots": { "type": "integer", "minimum": 1 },
+          "slot_bytes": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "sram_plan": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "command": {
+      "type": "object",
+      "required": ["id", "op"],
+      "properties": {
+        "id": { "type": "integer" },
+        "op": {
+          "type": "string",
+          "enum": [
+            "NOC_READ",
+            "NOC_WRITE",
+            "NOC_MULTICAST",
+            "CB_RESERVE",
+            "CB_PUSH",
+            "CB_WAIT",
+            "CB_POP",
+            "COMPUTE",
+            "SEM_INC",
+            "SEM_WAIT"
+          ]
+        }
+      }
+    }
+  }
+}

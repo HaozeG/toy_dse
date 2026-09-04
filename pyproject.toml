@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "accel-dse"
+version = "0.1.0"
+description = "Event-level design-space exploration for a Tenstorrent-style accelerator"
+readme = "CLAUDE.md"
+requires-python = ">=3.11"
+dependencies = [
+  "simpy>=4.1",
+  "pydantic>=2.6",
+  "numpy>=1.26",
+  "perfetto>=0.11",
+  "transformers>=4.51",
+  "typer>=0.12",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+dse = "cli:app"
+
+[tool.setuptools]
+py-modules = ["cli"]
+packages = ["hw", "sw", "sw.workload", "sw.mapper", "sim", "trace"]
+
+[tool.setuptools.package-data]
+hw = ["presets/*.yaml"]
+"sw.workload" = ["*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

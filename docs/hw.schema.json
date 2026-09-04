@@ -1,0 +1,265 @@
+{
+  "$defs": {
+    "CoreConfig": {
+      "properties": {
+        "sram_bytes": {
+          "default": 1572864,
+          "description": "Local SRAM capacity per core in bytes.",
+          "minimum": 1,
+          "title": "Sram Bytes",
+          "type": "integer"
+        },
+        "matrix_unit": {
+          "$ref": "#/$defs/MatrixUnitConfig",
+          "description": "Systolic / matrix unit."
+        },
+        "vector_unit": {
+          "$ref": "#/$defs/VectorUnitConfig",
+          "description": "Vector ALU."
+        },
+        "dm_engines": {
+          "default": 2,
+          "description": "Concurrent outstanding NoC transactions per core.",
+          "minimum": 1,
+          "title": "Dm Engines",
+          "type": "integer"
+        },
+        "noc_read_bytes_per_cycle": {
+          "default": 32,
+          "description": "Per-core injection/ejection limit in bytes/cycle.",
+          "minimum": 1,
+          "title": "Noc Read Bytes Per Cycle",
+          "type": "integer"
+        }
+      },
+      "title": "CoreConfig",
+      "type": "object"
+    },
+    "DramConfig": {
+      "properties": {
+        "channels": {
+          "default": 8,
+          "description": "Number of DRAM channels.",
+          "minimum": 1,
+          "title": "Channels",
+          "type": "integer"
+        },
+        "bytes_per_cycle_per_channel": {
+          "default": 12,
+          "description": "Peak payload bytes/cycle per channel.",
+          "minimum": 1,
+          "title": "Bytes Per Cycle Per Channel",
+          "type": "integer"
+        },
+        "latency_cycles": {
+          "default": 300,
+          "description": "Uncontended DRAM access latency in cycles.",
+          "minimum": 0,
+          "title": "Latency Cycles",
+          "type": "integer"
+        },
+        "positions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            }
+          ],
+          "default": "edge_left_right",
+          "description": "edge_left_right or explicit [[row, col], ...] mesh-edge attachments.",
+          "title": "Positions"
+        }
+      },
+      "title": "DramConfig",
+      "type": "object"
+    },
+    "GridConfig": {
+      "properties": {
+        "rows": {
+          "default": 8,
+          "description": "Mesh rows.",
+          "minimum": 1,
+          "title": "Rows",
+          "type": "integer"
+        },
+        "cols": {
+          "default": 8,
+          "description": "Mesh columns.",
+          "minimum": 1,
+          "title": "Cols",
+          "type": "integer"
+        }
+      },
+      "title": "GridConfig",
+      "type": "object"
+    },
+    "MatrixUnitConfig": {
+      "properties": {
+        "macs_per_cycle": {
+          "default": 1024,
+          "description": "MAC throughput of one matrix unit.",
+          "minimum": 1,
+          "title": "Macs Per Cycle",
+          "type": "integer"
+        },
+        "tile_shape": {
+          "default": [
+            32,
+            32,
+            32
+          ],
+          "description": "Native [M, N, K] tile shape the matrix unit consumes in one burst.",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Tile Shape",
+          "type": "array"
+        },
+        "count": {
+          "default": 1,
+          "description": "Matrix units per core.",
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "title": "MatrixUnitConfig",
+      "type": "object"
+    },
+    "NocConfig": {
+      "properties": {
+        "count": {
+          "default": 2,
+          "description": "Independent NoCs. Mapper assigns reads to noc0, writes to noc1.",
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "link_bytes_per_cycle": {
+          "default": 32,
+          "description": "Per-link payload bytes/cycle (each direction).",
+          "minimum": 1,
+          "title": "Link Bytes Per Cycle",
+          "type": "integer"
+        },
+        "hop_latency_cycles": {
+          "default": 2,
+          "description": "Fixed cycles added per hop.",
+          "minimum": 0,
+          "title": "Hop Latency Cycles",
+          "type": "integer"
+        },
+        "multicast": {
+          "default": true,
+          "description": "Hardware multicast occupies the tree once.",
+          "title": "Multicast",
+          "type": "boolean"
+        }
+      },
+      "title": "NocConfig",
+      "type": "object"
+    },
+    "SyncConfig": {
+      "properties": {
+        "semaphore_latency_cycles": {
+          "default": 8,
+          "description": "Cycles for SEM_INC visibility.",
+          "minimum": 0,
+          "title": "Semaphore Latency Cycles",
+          "type": "integer"
+        }
+      },
+      "title": "SyncConfig",
+      "type": "object"
+    },
+    "VectorUnitConfig": {
+      "properties": {
+        "lanes": {
+          "default": 32,
+          "description": "Vector lanes.",
+          "minimum": 1,
+          "title": "Lanes",
+          "type": "integer"
+        },
+        "elem_bytes": {
+          "default": 4,
+          "description": "Element width in bytes (fp32 accumulate = 4).",
+          "minimum": 1,
+          "title": "Elem Bytes",
+          "type": "integer"
+        },
+        "ops_per_cycle": {
+          "default": 1,
+          "description": "Ops per lane per cycle.",
+          "minimum": 1,
+          "title": "Ops Per Cycle",
+          "type": "integer"
+        },
+        "count": {
+          "default": 1,
+          "description": "Vector units per core.",
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "title": "VectorUnitConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "default": "grid8x8",
+      "description": "Preset or resolved configuration name.",
+      "title": "Name",
+      "type": "string"
+    },
+    "clock_ghz": {
+      "default": 1.0,
+      "description": "Clock in GHz. Simulator time unit is one cycle.",
+      "exclusiveMinimum": 0,
+      "title": "Clock Ghz",
+      "type": "number"
+    },
+    "grid": {
+      "$ref": "#/$defs/GridConfig",
+      "description": "Core mesh."
+    },
+    "core": {
+      "$ref": "#/$defs/CoreConfig",
+      "description": "Per-core resources."
+    },
+    "noc": {
+      "$ref": "#/$defs/NocConfig",
+      "description": "Mesh NoC."
+    },
+    "dram": {
+      "$ref": "#/$defs/DramConfig",
+      "description": "DRAM channels at mesh edges."
+    },
+    "sync": {
+      "$ref": "#/$defs/SyncConfig",
+      "description": "Synchronization."
+    }
+  },
+  "title": "HwConfig",
+  "type": "object"
+}
